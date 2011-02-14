@@ -12,7 +12,7 @@ module MadeByMany
         conditions = " AND (#{sanitize_sql(options[:conditions])})" if options[:conditions]
         ids_list   = ids.map { |id| quote_value(id,columns_hash[primary_key]) }.join(',')
         options.update :conditions => "#{quoted_table_name}.#{connection.quote_column_name(primary_key)} IN (#{ids_list})#{conditions}"
-        result = find_every(options)
+        result = find(:all, options)
         result
       end
       
