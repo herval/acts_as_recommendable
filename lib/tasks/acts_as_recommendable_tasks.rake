@@ -1,4 +1,6 @@
 namespace :recommendations do
+
+  desc 'builds the recommendations dataset'
   task :build => [:environment] do
     MadeByMany::ActsAsRecommendable::Logic.module_eval do
       # This will need to change to your specific model:

@@ -1,3 +1,16 @@
+require File.dirname(__FILE__) + '/progress_bar'
+require File.dirname(__FILE__) + '/cache_fix'
+
+# Fix RubyInline's permission problem,
+# RubyInline doesn't like directories with
+# group write permissions (like /tmp).                            
+ENV['INLINEDIR'] = File.join(Rails.respond_to?(:root) && !Rails.root.nil? ? Rails.root : RAILS_ROOT, 'tmp', 'rubyinline')
+begin
+  require 'inline'
+  require File.dirname(__FILE__) + '/lib/optimizations'
+rescue LoadError; end
+
+
 # ActsAsRecommended
 module MadeByMany
   module ActsAsRecommendable
@@ -44,7 +57,7 @@ module MadeByMany
         options[:through_singular]  ||= through_assoc.class_name.downcase
         options[:through_class]     ||= through_assoc.klass
         
-        class_inheritable_accessor :aar_options
+        class_attribute :aar_options
         self.aar_options = options
         
         options[:on_class].class_eval do
@@ -360,3 +373,5 @@ module MadeByMany
 
   end
 end
+
+require 'railtie'

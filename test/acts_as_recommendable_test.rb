@@ -17,18 +17,26 @@ class User < ActiveRecord::Base
 end
 
 
-class ActsAsRecommendableTest < Test::Unit::TestCase
-  
-  fixtures :books, :users, :user_books
+class ActsAsRecommendableTest < ActiveSupport::TestCase
   
   def setup
-    load_fixtures
-    # ActiveRecord::Base.logger = Logger.new(STDOUT)
-    # ActiveRecord::Base.clear_active_connections!
+    @users = (1..10).collect { |n| User.create(:name => "Patient #{n}") }
+    @books = (1..20).collect { |n| Book.create(:name => "Book #{n}") }
+
+    (1..8).collect { |n| UserBook.create(:user_id => 1, :book_id => n) }    
+    [2, 4, 5, 7, 8].collect { |n| UserBook.create(:user_id => 2, :book_id => n) }
+    [3, 4, 5, 6].collect { |n| UserBook.create(:user_id => 3, :book_id => n) }
+    [9, 10, 11].collect { |n| UserBook.create(:user_id => 4, :book_id => n) }
+    [9, 10].collect { |n| UserBook.create(:user_id => 5, :book_id => n) }
+    [1, 2, 19, 20].collect { |n| UserBook.create(:user_id => 6, :book_id => n) }
+    [1, 2, 20].collect { |n| UserBook.create(:user_id => 7, :book_id => n) }
+    [12, 13, 14, 15, 1, 10, 20].collect { |n| UserBook.create(:user_id => 8, :book_id => n) }
+    [12, 13, 1, 10, 20].collect { |n| UserBook.create(:user_id => 9, :book_id => n) }
+    [14, 1, 10, 20].collect { |n| UserBook.create(:user_id => 10, :book_id => n) }
   end
   
   def test_available_methods
-    user = User.find(1)
+    user = User.find(@users[0].id)
     assert_not_nil user
     assert_respond_to user, :similar_users
     assert_respond_to user, :recommended_books
